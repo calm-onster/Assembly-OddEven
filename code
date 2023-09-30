@@ -1,0 +1,79 @@
+.MODEL SMALL
+.STACK 100h
+.DATA
+    inputPrompt db 13, 10, 'Masukkan 2 digit angka: $'
+    input db 3 dup(?)
+    GENAP db 13, 10, 'GENAP', '$'
+    GANJIL db 13, 10, 'GANJIL', '$'
+    
+.CODE
+.STARTUP
+
+    PRINT_TEXT MACRO text
+        MOV DX, OFFSET text
+        MOV AH, 09h
+        INT 21h 
+    ENDM
+    
+    LOOP00:
+    MOV AX, @DATA
+    MOV DS, AX
+    
+    PRINT_TEXT inputPrompt
+    CALL MASUKAN
+    
+    ;Cek input 00 atau tidak
+    CMP [input], '0'
+    JNE CEK
+    CMP [input + 1], '0'
+    JE EXIT
+    
+    ;Cek ganjil atau genap
+    CEK:
+    MOV AL, [input + 1]
+    MOV BL, 2
+    DIV BL
+    CMP AH, 0
+    JNE INIGANJIL
+    
+    MOV DX, 10
+    MOV AH, 2
+    INT 21H
+    MOV DX, 13
+    MOV AH, 2
+    INT 21H
+    PRINT_TEXT GENAP
+    MOV AL, 0
+    JMP LOOP00
+     
+    INIGANJIL: 
+    MOV DX, 10
+    MOV AH, 2
+    INT 21H
+    MOV DX, 13
+    MOV AH, 2
+    INT 21H
+    PRINT_TEXT GANJIL
+    MOV AL, 0
+    JMP LOOP00
+    
+    MASUKAN PROC
+        MOV AH, 01h
+        INT 21h
+        MOV [input], AL  ;Simpan input pertama
+
+        MOV AH, 01h
+        INT 21h
+        MOV [input + 1], AL  ;Simpan input kedua
+
+    ;Sekarang ada dua digit dalam input[0] dan input[1]
+        
+        RET
+        MASUKAN ENDP
+    
+    ;Program berakhir
+    EXIT:
+    MOV AH, 4CH
+    INT 21H
+    
+END
