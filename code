@@ -68,8 +68,8 @@
 
     ;Sekarang ada dua digit dalam input[0] dan input[1]
         
-        RET
-        MASUKAN ENDP
+    RET
+    MASUKAN ENDP
     
     ;Program berakhir
     EXIT:
